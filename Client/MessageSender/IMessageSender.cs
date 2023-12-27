@@ -1,7 +1,10 @@
-﻿namespace Client.ImageSender
+﻿using System.IO;
+using System.Net.Sockets;
+
+namespace Client.MessageSender
 {
     public interface IMessageSender
     {
-        public void SendMsg(string msg);
+        public Task SendMsg(string msg, NetworkStream stream);
     }
 }
