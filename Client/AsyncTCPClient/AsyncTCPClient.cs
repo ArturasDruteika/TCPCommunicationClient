@@ -48,12 +48,7 @@ namespace Client.AsyncTCPClient
 
         public async Task SendImgAsync(string imgPath)
         {
-            byte[] header = Encoding.ASCII.GetBytes(CommandTypes.IMG);
-
-            await _stream.WriteAsync(header, 0, header.Length);
-
-            using var fileStream = new FileStream(imgPath, FileMode.Open, FileAccess.Read);
-            await fileStream.CopyToAsync(_stream);
+            await _imageSender.SendImg(imgPath, _stream);
         }
 
         public void ReceiveMsg()

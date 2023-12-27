@@ -4,6 +4,6 @@ namespace Client.ImageSender
 {
     public interface IImageSender
     {
-        public void SendImg(string imgPath, NetworkStream stream);
+        public Task SendImg(string imgPath, NetworkStream stream);
     }
 }
