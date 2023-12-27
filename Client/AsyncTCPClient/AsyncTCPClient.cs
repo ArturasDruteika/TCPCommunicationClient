@@ -15,8 +15,8 @@ namespace Client.AsyncTCPClient
     {
         private string _ip;
         private int _port;
-        private TcpClient _client;
-        private NetworkStream _stream;
+        private TcpClient? _client;
+        private NetworkStream? _stream;
         private IMessageSender _messageSender;
         private IImageSender _imageSender;
 
@@ -31,14 +31,19 @@ namespace Client.AsyncTCPClient
             _stream = _client.GetStream();
         }
 
-        public void Close()
+        public void CloseConnection()
         {
-            _client.Close();
-        }
+            if (_stream != null)
+            {
+                _stream.Close(); // Close the stream first
+                _stream = null;
+            }
 
-        public void CloseStream()
-        {
-            _stream.Close();
+            if (_client != null)
+            {
+                _client.Close(); // Then close the client
+                _client = null;
+            }
         }
 
         public async Task SendMsgAsync(string msg)
