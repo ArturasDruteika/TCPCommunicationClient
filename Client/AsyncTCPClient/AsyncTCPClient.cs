@@ -5,8 +5,9 @@ using System.Linq;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
-using Client.MessageSender;
 using Client.ImageSender;
+using Client.MessageHandlers.MessageSenders;
+using Client.MessageHandlers.MessageReceivers;
 
 
 namespace Client.AsyncTCPClient
@@ -19,13 +20,15 @@ namespace Client.AsyncTCPClient
         private NetworkStream? _stream;
         private IMessageSender _messageSender;
         private IImageSender _imageSender;
+        private IMessageReceiver _messageReceiver;
 
-        public AsyncTCPClient(string ip, int port, IMessageSender messageSender, IImageSender imageSender)
+        public AsyncTCPClient(string ip, int port, IMessageSender messageSender, IImageSender imageSender, IMessageReceiver messageReceiver)
         {
             _ip = ip;
             _port = port;
             _messageSender = messageSender;
             _imageSender = imageSender;
+            _messageReceiver = messageReceiver;
 
             _client = new TcpClient(_ip, _port);
             _stream = _client.GetStream();
@@ -58,12 +61,7 @@ namespace Client.AsyncTCPClient
 
         public void ReceiveMsg()
         {
-            byte[] data = new byte[1024];
-            String responseData = String.Empty;
-
-            int bytes = _stream.Read(data, 0, data.Length);
-            responseData = Encoding.ASCII.GetString(data, 0, bytes);
-            Console.WriteLine("Received: " + responseData);
+            _messageReceiver.ReceiveMsg(_stream);
         }
     }
 }
