@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ClientWrapper
+namespace Client.MessageHandlers
 {
     public static class CommandTypes
     {
