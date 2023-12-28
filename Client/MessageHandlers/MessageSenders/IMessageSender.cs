@@ -1,7 +1,7 @@
 ﻿using System.IO;
 using System.Net.Sockets;
 
-namespace Client.MessageSender
+namespace Client.MessageHandlers.MessageSenders
 {
     public interface IMessageSender
     {
