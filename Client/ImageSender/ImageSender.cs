@@ -7,12 +7,12 @@ namespace Client.ImageSender
 {
     public class ImageSender : IImageSender
     {
-        public async Task SendImg(string imgPath, NetworkStream stream)
+        public async Task SendImg(string imgPath, NetworkStream stream, CancellationToken cancellationToken)
         {
             byte[] header = Encoding.ASCII.GetBytes(CommandTypes.IMG);
-            await stream.WriteAsync(header, 0, header.Length);
+            await stream.WriteAsync(header, 0, header.Length, cancellationToken);
             using var fileStream = new FileStream(imgPath, FileMode.Open, FileAccess.Read);
-            await fileStream.CopyToAsync(stream);
+            await fileStream.CopyToAsync(stream, cancellationToken);
         }
     }
 }

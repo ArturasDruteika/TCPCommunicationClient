@@ -1,5 +1,4 @@
-﻿using ClientWrapper;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Sockets;
@@ -8,6 +7,7 @@ using System.Threading.Tasks;
 using Client.ImageSender;
 using Client.MessageHandlers.MessageSenders;
 using Client.MessageHandlers.MessageReceivers;
+using System.Threading;
 
 
 namespace Client.AsyncTCPClient
@@ -21,6 +21,7 @@ namespace Client.AsyncTCPClient
         private IMessageSender _messageSender;
         private IImageSender _imageSender;
         private IMessageReceiver _messageReceiver;
+        private CancellationTokenSource _cts = new CancellationTokenSource();
 
         public AsyncTCPClient(string ip, int port, IMessageSender messageSender, IImageSender imageSender, IMessageReceiver messageReceiver)
         {
@@ -47,21 +48,23 @@ namespace Client.AsyncTCPClient
                 _client.Close(); // Then close the client
                 _client = null;
             }
+
+            _cts.Cancel();
         }
 
         public async Task SendMsgAsync(string msg)
         {
-            await _messageSender.SendMsg(msg, _stream);
+            await _messageSender.SendMsg(msg, _stream, _cts.Token);
         }
 
         public async Task SendImgAsync(string imgPath)
         {
-            await _imageSender.SendImg(imgPath, _stream);
+            await _imageSender.SendImg(imgPath, _stream, _cts.Token);
         }
 
         public void ReceiveMsg()
         {
-            _messageReceiver.ReceiveMsg(_stream);
+            _messageReceiver.ReceiveMsg(_stream, _cts.Token);
         }
     }
 }
