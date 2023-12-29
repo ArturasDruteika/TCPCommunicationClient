@@ -62,9 +62,9 @@ namespace Client.AsyncTCPClient
             await _imageSender.SendImg(imgPath, _stream, _cts.Token);
         }
 
-        public void ReceiveMsg()
+        public async Task ReceiveMsg()
         {
-            _messageReceiver.ReceiveMsg(_stream, _cts.Token);
+            await _messageReceiver.ReceiveMsg(_stream, _cts.Token);
         }
     }
 }
