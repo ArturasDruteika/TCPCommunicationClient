@@ -10,6 +10,9 @@ namespace Client.MessageHandlers.MessageSenders
         {
             byte[] header = Encoding.ASCII.GetBytes(CommandTypes.MSG);
             byte[] data = Encoding.ASCII.GetBytes(msg);
+
+            await stream.WriteAsync(header, 0, header.Length);
+            await stream.WriteAsync(data, 0, data.Length);
         }
     }
 }
