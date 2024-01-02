@@ -11,8 +11,15 @@ namespace Client.MessageHandlers.MessageSenders
             byte[] header = Encoding.ASCII.GetBytes(CommandTypes.MSG);
             byte[] data = Encoding.ASCII.GetBytes(msg);
 
-            await stream.WriteAsync(header, 0, header.Length);
-            await stream.WriteAsync(data, 0, data.Length);
+            // Create a new array that can hold both header and data
+            byte[] combined = new byte[header.Length + data.Length];
+
+            // Copy the header and data into the combined array
+            Buffer.BlockCopy(header, 0, combined, 0, header.Length);
+            Buffer.BlockCopy(data, 0, combined, header.Length, data.Length);
+
+            // Send the combined message in one go
+            await stream.WriteAsync(combined, 0, combined.Length);
         }
     }
 }
