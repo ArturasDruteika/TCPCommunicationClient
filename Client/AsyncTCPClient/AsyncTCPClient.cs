@@ -16,6 +16,7 @@ namespace Client.AsyncTCPClient
     {
         private string _ip;
         private int _port;
+        private string _username;
         private TcpClient? _client;
         private NetworkStream? _stream;
         private IMessageSender _messageSender;
@@ -23,16 +24,19 @@ namespace Client.AsyncTCPClient
         private IMessageReceiver _messageReceiver;
         private CancellationTokenSource _cts = new CancellationTokenSource();
 
-        public AsyncTCPClient(string ip, int port, IMessageSender messageSender, IImageSender imageSender, IMessageReceiver messageReceiver)
+        public AsyncTCPClient(string ip, int port, string username, IMessageSender messageSender, IImageSender imageSender, IMessageReceiver messageReceiver)
         {
             _ip = ip;
             _port = port;
+            _username = username;
             _messageSender = messageSender;
             _imageSender = imageSender;
             _messageReceiver = messageReceiver;
 
             _client = new TcpClient(_ip, _port);
             _stream = _client.GetStream();
+
+            _ = SendInitialMsgAsync();
         }
 
         public void CloseConnection()
@@ -65,6 +69,11 @@ namespace Client.AsyncTCPClient
         public async Task ReceiveMsg()
         {
             await _messageReceiver.ReceiveMsg(_stream, _cts.Token);
+        }
+
+        private async Task SendInitialMsgAsync()
+        {
+            await SendMsgAsync(_username);
         }
     }
 }
