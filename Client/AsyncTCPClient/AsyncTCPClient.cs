@@ -14,66 +14,66 @@ namespace Client.AsyncTCPClient
 {
     public class AsyncTCPClient
     {
-        private string _ip;
-        private int _port;
-        private string _username;
-        private TcpClient? _client;
-        private NetworkStream? _stream;
-        private IMessageSender _messageSender;
-        private IImageSender _imageSender;
-        private IMessageReceiver _messageReceiver;
-        private CancellationTokenSource _cts = new CancellationTokenSource();
+        private string Ip;
+        private int Port;
+        private string Username;
+        private TcpClient? Client;
+        private NetworkStream? Stream;
+        private IMessageSender MessageSender;
+        private IImageSender ImageSender;
+        private IMessageReceiver MessageReceiver;
+        private CancellationTokenSource Cts = new CancellationTokenSource();
 
         public AsyncTCPClient(string ip, int port, string username, IMessageSender messageSender, IImageSender imageSender, IMessageReceiver messageReceiver)
         {
-            _ip = ip;
-            _port = port;
-            _username = username;
-            _messageSender = messageSender;
-            _imageSender = imageSender;
-            _messageReceiver = messageReceiver;
+            Ip = ip;
+            Port = port;
+            Username = username;
+            MessageSender = messageSender;
+            ImageSender = imageSender;
+            MessageReceiver = messageReceiver;
 
-            _client = new TcpClient(_ip, _port);
-            _stream = _client.GetStream();
+            Client = new TcpClient(Ip, Port);
+            Stream = Client.GetStream();
 
             _ = SendInitialMsgAsync();
         }
 
         public void CloseConnection()
         {
-            if (_stream != null)
+            if (Stream != null)
             {
-                _stream.Close(); // Close the stream first
-                _stream = null;
+                Stream.Close(); // Close the stream first
+                Stream = null;
             }
 
-            if (_client != null)
+            if (Client != null)
             {
-                _client.Close(); // Then close the client
-                _client = null;
+                Client.Close(); // Then close the client
+                Client = null;
             }
 
-            _cts.Cancel();
+            Cts.Cancel();
         }
 
         public async Task SendMsgAsync(string msg)
         {
-            await _messageSender.SendMsg(msg, _stream, _cts.Token);
+            await MessageSender.SendMsg(msg, Stream, Cts.Token);
         }
 
         public async Task SendImgAsync(string imgPath)
         {
-            await _imageSender.SendImg(imgPath, _stream, _cts.Token);
+            await ImageSender.SendImg(imgPath, Stream, Cts.Token);
         }
 
         public async Task ReceiveMsg()
         {
-            await _messageReceiver.ReceiveMsg(_stream, _cts.Token);
+            await MessageReceiver.ReceiveMsg(Stream, Cts.Token);
         }
 
         private async Task SendInitialMsgAsync()
         {
-            await SendMsgAsync(_username);
+            await SendMsgAsync(Username);
         }
     }
 }
