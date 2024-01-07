@@ -1,6 +1,7 @@
 ﻿using System.IO;
 using System.Net.Sockets;
 using System.Text;
+using Client.Containers;
 
 namespace Client.MessageHandlers.MessageSenders
 {
