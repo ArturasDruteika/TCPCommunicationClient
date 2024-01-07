@@ -8,6 +8,7 @@ using Client.ImageSender;
 using Client.MessageHandlers.MessageSenders;
 using Client.MessageHandlers.MessageReceivers;
 using System.Threading;
+using AsyncTcpServer.Containers;
 
 
 namespace Client.AsyncTCPClient
@@ -68,7 +69,7 @@ namespace Client.AsyncTCPClient
 
         public async Task ReceiveMsg()
         {
-            await MessageReceiver.ReceiveMsg(Stream, Cts.Token);
+            ClientStatus status = await MessageReceiver.ReceiveMsg(Stream, Cts.Token);
         }
 
         private async Task SendInitialMsgAsync()
