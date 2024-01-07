@@ -48,6 +48,7 @@ class Program
             }
 
             await client.SendMsgAsync(textInput);
+            client.ReceiveMsg();
         }
 
         client.CloseConnection();
