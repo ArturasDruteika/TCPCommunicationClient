@@ -1,9 +1,10 @@
-﻿using System.Net.Sockets;
+﻿using AsyncTcpServer.Containers;
+using System.Net.Sockets;
 
 namespace Client.MessageHandlers.MessageReceivers
 {
     public interface IMessageReceiver
     {
-        public Task ReceiveMsg(NetworkStream stream, CancellationToken cancellationToken);
+        public Task<ClientStatus> ReceiveMsg(NetworkStream stream, CancellationToken ctsToken);
     }
 }
