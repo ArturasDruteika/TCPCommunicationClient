@@ -1,17 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Sockets;
-using System.Text;
-using System.Threading.Tasks;
-using Client.ImageSender;
+﻿using System.Net.Sockets;
+using Client.ImageSenders;
 using Client.MessageHandlers.MessageSenders;
 using Client.MessageHandlers.MessageReceivers;
-using System.Threading;
-using AsyncTcpServer.Containers;
+using Client.ServerListeners;
+using Client.TextInputHandlers;
 
-
-namespace Client.AsyncTCPClient
+namespace Client.AsyncTCPClients
 {
     public class AsyncTCPClient
     {
@@ -25,6 +19,9 @@ namespace Client.AsyncTCPClient
         private IMessageReceiver MessageReceiver;
         private CancellationTokenSource Cts = new CancellationTokenSource();
 
+        private ServerListener ServerListenerObj;
+        private TextInputHandler TextInputHandlerObj;
+
         public AsyncTCPClient(string ip, int port, string username, IMessageSender messageSender, IImageSender imageSender, IMessageReceiver messageReceiver)
         {
             Ip = ip;
@@ -36,8 +33,10 @@ namespace Client.AsyncTCPClient
 
             Client = new TcpClient(Ip, Port);
             Stream = Client.GetStream();
+            ServerListenerObj = new ServerListener(Stream, messageReceiver);
+            TextInputHandlerObj = new TextInputHandler(Stream, messageSender);
 
-            _ = SendInitialMsgAsync();
+            SendInitialMsgAsync();
         }
 
         public void CloseConnection()
@@ -55,26 +54,46 @@ namespace Client.AsyncTCPClient
             }
 
             Cts.Cancel();
+            ServerListenerObj.StopListening();
         }
 
-        public async Task SendMsgAsync(string msg)
+        public void Run()
         {
-            await MessageSender.SendMsg(msg, Stream, Cts.Token);
+            StartListening();
+            StartUserInputWaiting();
+
+            while (!Cts.Token.IsCancellationRequested)
+            {
+                if (Cts.Token.IsCancellationRequested)
+                {
+                    break;
+                }
+            }
         }
 
-        public async Task SendImgAsync(string imgPath)
+        private void StartListening()
         {
-            await ImageSender.SendImg(imgPath, Stream, Cts.Token);
+            if (Stream == null)
+            {
+                return;
+            }
+
+            ServerListenerObj.StartListening();
         }
 
-        public async Task ReceiveMsg()
+        private void StartUserInputWaiting()
         {
-            ClientStatus status = await MessageReceiver.ReceiveMsg(Stream, Cts.Token);
+            if (Stream == null)
+            {
+                return;
+            }
+
+            TextInputHandlerObj.StartListening();
         }
 
-        private async Task SendInitialMsgAsync()
+        private void SendInitialMsgAsync()
         {
-            await SendMsgAsync(Username);
+            MessageSender.SendMsg(Username, Stream);
         }
     }
 }

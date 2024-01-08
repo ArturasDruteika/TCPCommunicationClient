@@ -3,7 +3,7 @@ using System.Net.Sockets;
 using System.Text;
 
 
-namespace Client.ImageSender
+namespace Client.ImageSenders
 {
     public class ImageSender : IImageSender
     {
