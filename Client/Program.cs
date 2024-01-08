@@ -24,33 +24,15 @@ class Program
         string? executableDirectory = Path.GetDirectoryName(executablePath);
         string imgPath = Path.Combine(executableDirectory, "data", "images", "fish.jpg");
 
-        await RunClient(messageSender, imageSender, messageReceiver);
+        RunClient(messageSender, imageSender, messageReceiver);
     }
 
-    private static async Task RunClient(IMessageSender messageSender, IImageSender imageSender, IMessageReceiver messageReceiver)
+    private static void RunClient(IMessageSender messageSender, IImageSender imageSender, IMessageReceiver messageReceiver)
     {
         Console.WriteLine("Enter username: ");
         string? username = Console.ReadLine();
 
         AsyncTCPClient client = new AsyncTCPClient(IP, PORT, username, messageSender, imageSender, messageReceiver);
-
-        Console.WriteLine("Please enter some text:");
-
-        string? textInput = string.Empty;
-
-        while (true)
-        {
-            textInput = Console.ReadLine();
-
-            if (textInput == string.Empty)
-            {
-                break;
-            }
-
-            await client.SendMsgAsync(textInput);
-            client.ReceiveMsg();
-        }
-
-        client.CloseConnection();
+        client.Run();
     }
 }
