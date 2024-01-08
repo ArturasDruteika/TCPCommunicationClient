@@ -1,12 +1,11 @@
 ﻿using System.Net.Sockets;
-using Client.ImageSender;
+using Client.ImageSenders;
 using Client.MessageHandlers.MessageSenders;
 using Client.MessageHandlers.MessageReceivers;
 using Client.ServerListeners;
 using Client.TextInputHandlers;
 
-
-namespace Client.AsyncTCPClient
+namespace Client.AsyncTCPClients
 {
     public class AsyncTCPClient
     {

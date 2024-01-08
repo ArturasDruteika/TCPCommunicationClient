@@ -1,6 +1,6 @@
 ﻿using System.Net.Sockets;
 
-namespace Client.ImageSender
+namespace Client.ImageSenders
 {
     public interface IImageSender
     {
