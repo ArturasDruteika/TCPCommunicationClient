@@ -64,10 +64,7 @@ namespace Client.AsyncTCPClients
 
             while (!Cts.Token.IsCancellationRequested)
             {
-                if (Cts.Token.IsCancellationRequested)
-                {
-                    break;
-                }
+                Thread.Sleep(1000);
             }
         }
 
